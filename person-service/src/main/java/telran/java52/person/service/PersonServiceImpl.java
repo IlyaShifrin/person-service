@@ -1,5 +1,7 @@
 package telran.java52.person.service;
 
+import java.time.LocalDate;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,17 +77,29 @@ public class PersonServiceImpl implements PersonService {
 	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByAges(int minAge, int maxAge) {
-		return personRepository.findPersonsByAges(minAge, maxAge)
-					.map(s -> modelMapper.map(s, PersonDto.class))
-					.toList();
+		
+		LocalDate birthDateFrom = LocalDate.now().minusYears(maxAge + 1);
+		LocalDate birthDateTo = LocalDate.now().minusYears(minAge - 1);
+		
+		return personRepository.findByBirthDateBetween(birthDateFrom, birthDateTo)
+				.map(s -> modelMapper.map(s, PersonDto.class))
+				.toList();
+		
+//		return personRepository.findPersonsByAges(minAge, maxAge)
+//					.map(s -> modelMapper.map(s, PersonDto.class))
+//					.toList();
 	}
 	
 	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByCity(String city) {
-		return personRepository.findPersonsByCity(city)
-					.map(s -> modelMapper.map(s, PersonDto.class))
-					.toList();
+		return personRepository.findByAddressCity(city)
+				.map(s -> modelMapper.map(s, PersonDto.class))
+				.toList();
+		
+//		return personRepository.findPersonsByCity(city)
+//					.map(s -> modelMapper.map(s, PersonDto.class))
+//					.toList();
 	}
 
 }
