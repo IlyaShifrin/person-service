@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import telran.java52.person.dao.PersonRepository;
 import telran.java52.person.dto.AddressDto;
+import telran.java52.person.dto.CityPopulationDto;
 import telran.java52.person.dto.PersonDto;
 import telran.java52.person.dto.exception.PersonNotFoundException;
 import telran.java52.person.model.Address;
@@ -37,6 +38,7 @@ public class PersonServiceImpl implements PersonService {
 		return modelMapper.map(person, PersonDto.class);
 	}
 	
+	@Transactional
 	@Override
 	public PersonDto removePerson(Integer id) {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
@@ -44,14 +46,16 @@ public class PersonServiceImpl implements PersonService {
 		return modelMapper.map(person, PersonDto.class);
 	}
 
+	@Transactional
 	@Override
 	public PersonDto updateName(Integer id, String name) {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
 		person.setName(name);
-		personRepository.save(person);
+//		personRepository.save(person);
 		return modelMapper.map(person, PersonDto.class);
 	}
 	
+	@Transactional
 	@Override
 	public PersonDto updateAddress(Integer id, AddressDto addressDto) {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
@@ -62,14 +66,14 @@ public class PersonServiceImpl implements PersonService {
 		
 		Address address = new Address(city, street, building);
 		person.setAddress(address);
-		personRepository.save(person);
+//		personRepository.save(person);
 		return modelMapper.map(person, PersonDto.class);
 	}
 	
 	@Transactional(readOnly = true)
 	@Override
 	public Iterable<PersonDto> findPersonsByName(String name) {
-		return personRepository.findByName(name)
+		return personRepository.findByNameIgnoreCase(name)
 					.map(s -> modelMapper.map(s, PersonDto.class))
 					.toList();
 	}
@@ -100,6 +104,13 @@ public class PersonServiceImpl implements PersonService {
 //		return personRepository.findPersonsByCity(city)
 //					.map(s -> modelMapper.map(s, PersonDto.class))
 //					.toList();
+	}
+	
+	public Iterable<CityPopulationDto> getCitiesPopulation() {
+		return personRepository.getCitiesPopulation()
+				.stream()
+				.map(s -> modelMapper.map(s, CityPopulationDto.class))
+				.toList();
 	}
 
 }
