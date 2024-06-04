@@ -3,6 +3,7 @@ package telran.java52.person.service;
 import java.time.LocalDate;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,11 +14,13 @@ import telran.java52.person.dto.CityPopulationDto;
 import telran.java52.person.dto.PersonDto;
 import telran.java52.person.dto.exception.PersonNotFoundException;
 import telran.java52.person.model.Address;
+import telran.java52.person.model.Child;
+import telran.java52.person.model.Employee;
 import telran.java52.person.model.Person;
 
 @Service
 @RequiredArgsConstructor
-public class PersonServiceImpl implements PersonService {
+public class PersonServiceImpl implements PersonService, CommandLineRunner {
 
 	final PersonRepository personRepository;
 	final ModelMapper modelMapper;
@@ -111,6 +114,25 @@ public class PersonServiceImpl implements PersonService {
 				.stream()
 				.map(s -> modelMapper.map(s, CityPopulationDto.class))
 				.toList();
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		if (personRepository.count() == 0) {
+			Person person = new Person(1000, "John", LocalDate.of(1985, 3, 11),
+					new Address("Tel Aviv", "Ben Gvirol", 81));
+			
+			Child child = new Child(2000, "Mosche", LocalDate.of(2018, 7, 5),
+					new Address("Ashkelon", "Bar Kohva", 21), "Shalom");
+			
+			Employee employee = new Employee(3000, "Sarah", LocalDate.of(1995, 11, 23), 
+					new Address("Rehovot", "Herzl", 7), "Motorola", 20_000);
+			
+			personRepository.save(person);
+			personRepository.save(child);
+			personRepository.save(employee);
+		}
+		
 	}
 
 }
