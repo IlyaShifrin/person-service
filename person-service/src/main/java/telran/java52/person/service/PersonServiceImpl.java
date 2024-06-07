@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import telran.java52.person.dao.PersonRepository;
 import telran.java52.person.dto.AddressDto;
+import telran.java52.person.dto.ChildDto;
 import telran.java52.person.dto.CityPopulationDto;
+import telran.java52.person.dto.EmployeeDto;
 import telran.java52.person.dto.PersonDto;
 import telran.java52.person.dto.exception.PersonNotFoundException;
 import telran.java52.person.model.Address;
@@ -92,10 +94,6 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 		return personRepository.findByBirthDateBetween(birthDateFrom, birthDateTo)
 				.map(p -> mapper.mapToDto(p))
 				.toArray(PersonDto[]::new);
-		
-//		return personRepository.findPersonsByAges(minAge, maxAge)
-//					.map(s -> modelMapper.map(s, PersonDto.class))
-//					.toList();
 	}
 	
 	@Transactional(readOnly = true)
@@ -104,10 +102,22 @@ public class PersonServiceImpl implements PersonService, CommandLineRunner {
 		return personRepository.findByAddressCity(city)
 				.map(p -> mapper.mapToDto(p))
 				.toArray(PersonDto[]::new);
-		
-//		return personRepository.findPersonsByCity(city)
-//					.map(s -> modelMapper.map(s, PersonDto.class))
-//					.toList();
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public PersonDto[] findAllChildren() {
+		return personRepository.findByKindergartenIsNotNull()
+				.map(p -> mapper.mapToDto(p))
+				.toArray(ChildDto[]::new);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public PersonDto[] findEmployeesBySalary(int minSalary, int maxSalary) {
+		return personRepository.findBySalaryBetween(minSalary, maxSalary)
+				.map(p -> mapper.mapToDto(p))
+				.toArray(EmployeeDto[]::new);
 	}
 	
 	public Iterable<CityPopulationDto> getCitiesPopulation() {
