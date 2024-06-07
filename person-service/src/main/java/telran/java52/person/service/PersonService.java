@@ -16,11 +16,11 @@ public interface PersonService {
 	
 	PersonDto updateAddress(Integer id, AddressDto addressDto);
 	
-	Iterable<PersonDto> findPersonsByName(String name);
+	PersonDto[] findPersonsByName(String name);
 	
-	Iterable<PersonDto> findPersonsByAges(int minAge, int maxAge);
+	PersonDto[] findPersonsByAges(int minAge, int maxAge);
 	
-	Iterable<PersonDto> findPersonsByCity(String city);
+	PersonDto[] findPersonsByCity(String city);
 	
 	Iterable<CityPopulationDto> getCitiesPopulation();
 	
